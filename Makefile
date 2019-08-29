@@ -9,6 +9,7 @@ help:
 	$(info make sim_cmd        - run simulation in Modelsim (console mode))
 	$(info make sim_gui        - run simulation in Modelsim (gui mode))
 	$(info make prog_comp      - compile program and copy program.hex to program_file folder)
+	$(info make prog_copy_hex  - copy program.hex to program_file folder)
 	$(info Open and read the Makefile for details)
 	@true
 
@@ -77,6 +78,10 @@ show_progs:
 prog_comp:
 	mkdir -p program_file
 	java -jar schoolMIPS/scripts/bin/Mars4_5.jar nc a dump .text HexText program_file/program.hex schoolMIPS/program/$(PROG_NAME)/main.S
+
+prog_copy_hex:
+	mkdir -p program_file
+	cp schoolMIPS/program/$(PROG_NAME)/program.hex program_file/program.hex
 
 prog_clean:
 	rm -rfd $(PWD)/program_file

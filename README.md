@@ -6,16 +6,17 @@ For loading project with git program:
 
     $ git clone https://github.com/Dmitriy0111/schoolMIPS_ctb.git
     $ cd schoolMIPS_ctb 
-    $ git checkout 00_simple
+    $ git checkout 00_simple_ctb
     $ git submodule update --init --recursive 
 
-Or download project from GitHub site <a href="https://github.com/Dmitriy0111/schoolMIPS_ctb">00_simple</a>
+Or download project from GitHub site <a href="https://github.com/Dmitriy0111/schoolMIPS_ctb">00_simple_ctb</a>
 
 **Impotant:** Before starting simulation process make compilation program.
 
 ## Compilation program:
 *   **set PROG_NAME="name of folder with main program"** is used for setting current program. For example "set PROG_NAME=01_fibonacci";
 *   **make prog_comp** is used for compiling program;
+*   **make prog_copy_hex** is used for copying hex file from program folder;
 *   **make prog_clean** is used for cleaning compilation results folder.
 
 ## Simulation:
