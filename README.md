@@ -1,15 +1,15 @@
 # schoolMIPS_ctb
-Other testbench for 01_mmio schoolMIPS.
+Other testbench for 02_irq schoolMIPS.
 
 ## Quickstart:
 For loading project with git program:
 
     $ git clone https://github.com/Dmitriy0111/schoolMIPS_ctb.git
     $ cd schoolMIPS_ctb 
-    $ git checkout 01_mmio_ctb
+    $ git checkout 02_irq_ctb
     $ git submodule update --init --recursive 
 
-Or download project from GitHub site <a href="https://github.com/Dmitriy0111/schoolMIPS_ctb">01_mmio_ctb</a>
+Or download project from GitHub site <a href="https://github.com/Dmitriy0111/schoolMIPS_ctb">02_irq_ctb</a>
 
 **Impotant:** Before starting simulation process make compilation program.
 

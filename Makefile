@@ -68,7 +68,7 @@ sim_gui: sim_dir
 ########################################################
 # compiling  - program
 
-PROG_LIST ?= 00_counter 01_fibonacci 02_sqrt 03_ram 04_gpio 05_pwm 06_als
+PROG_LIST ?= 00_counter 01_fibonacci 02_sqrt 03_ram 04_irq_timer 05_exc_ri
 
 PROG_NAME ?= 00_counter
 
@@ -77,7 +77,10 @@ show_progs:
 
 prog_comp:
 	mkdir -p program_file
-	java -jar schoolMIPS/scripts/bin/Mars4_5.jar nc a dump .text HexText program_file/program.hex schoolMIPS/program/$(PROG_NAME)/main.S
+	mips-mti-elf-gcc -nostdlib -EL -march=mips32 -T schoolMIPS/program/$(PROG_NAME)/program.ld schoolMIPS/program/$(PROG_NAME)/main.S -o program_file/program.elf
+	mips-mti-elf-objdump -M no-aliases -Dz program_file/program.elf > program_file/program.dis
+	echo @00000000 > program_file/program.hex
+	mips-mti-elf-objdump -Dz program_file/program.elf | sed -rn 's/\s+[a-f0-9]+:\s+([a-f0-9]*)\s+.*/\1/p' >> program_file/program.hex
 
 prog_copy_hex:
 	mkdir -p program_file

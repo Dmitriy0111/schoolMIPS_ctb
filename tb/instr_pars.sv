@@ -69,6 +69,7 @@ class instr_pars#(parameter print_info_en = '1, term_print = '1, txt_log_print =
                                 I_ADDU,
                                 I_OR,
                                 I_SRL,
+                                I_SLL,
                                 I_SLTU,
                                 I_SUBU,
                                 I_ADDIU,
@@ -76,7 +77,12 @@ class instr_pars#(parameter print_info_en = '1, term_print = '1, txt_log_print =
                                 I_LUI,
                                 I_BNE,
                                 I_LW,
-                                I_SW
+                                I_SW,
+                                I_MFC0,
+                                I_MTC0,
+                                I_ERET,
+                                I_MFHI,
+                                I_MFLO
                             };
 
     // class constructor
@@ -115,6 +121,11 @@ class instr_pars#(parameter print_info_en = '1, term_print = '1, txt_log_print =
             ret_str = { ret_str , " " , registers_list[instr[25 : 21]] , $psprintf("(0x%h)", instr[25 : 21] ) };
             ret_str = { ret_str , " " , registers_list[instr[20 : 16]] , $psprintf("(0x%h)", instr[20 : 16] ) };
         end
+        if( instr_s_.INSTR_TYPE == "C0" )
+        begin
+            ret_str = { registers_list[instr[20 : 16]] , $psprintf("(0x%h)", instr[20 : 16] ) };
+            ret_str = { ret_str , " " , registers_list[instr[15 : 11]] , $psprintf("(0x%h)", instr[15 : 11] ) };
+        end
         return ret_str;
     endfunction : find_operands
 
@@ -137,14 +148,15 @@ class instr_pars#(parameter print_info_en = '1, term_print = '1, txt_log_print =
         end
         foreach( instr_list[i] )
         begin 
-            casex( { instr[31-:6] , instr[0+:6] } )
-                { instr_list[i].OPCODE , instr_list[i].INSTR_FUNC } : 
+            casex( { instr[31-:6] , instr[0+:6] , instr[21 +: 5] } )
+                { instr_list[i].OPCODE , instr_list[i].INSTR_FUNC , instr_list[i].COP_HF } : 
                     begin
                         ret_str =  $psprintf("0x%h : %s %s", instr, instr_list[i].I_NAME, find_operands(instr_list[i]) );
                         return ret_str;
                     end
             endcase
         end
+        ret_str =  $psprintf("0x%h : unknown instruction", instr );
         return ret_str;
     endfunction : pars_instr
 
