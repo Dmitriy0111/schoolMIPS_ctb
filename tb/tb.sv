@@ -8,6 +8,7 @@
 */
 
 `include "instr_pars.sv"
+`include "../schoolMIPS/src/sm_settings.vh"
 
 module tb();
 
@@ -24,6 +25,12 @@ module tb();
     logic   [0  : 0]    cpuClk;
     logic   [4  : 0]    regAddr;
     logic   [31 : 0]    regData;
+        
+    `ifdef SM_CONFIG_AHB_GPIO
+    logic   [`SM_GPIO_WIDTH-1 : 0]  port_gpioIn;
+    logic   [`SM_GPIO_WIDTH-1 : 0]  port_gpioOut;
+    `endif
+        
     
     // help variables
     int                 cycle_counter;      // cycle counter
@@ -45,13 +52,18 @@ module tb();
     sm_top 
     sm_top_0
     (
-        .clkIn          ( clk       ),
-        .rst_n          ( rst_n     ),
-        .clkDevide      ( 4'b0      ),
-        .clkEnable      ( 1'b1      ),
-        .clk            ( cpuClk    ),
-        .regAddr        ( regAddr   ),
-        .regData        ( regData   )
+        .clkIn          ( clk           ),
+        .rst_n          ( rst_n         ),
+        .clkDevide      ( 4'b0          ),
+        .clkEnable      ( 1'b1          ),
+        .clk            ( cpuClk        ),
+        .regAddr        ( regAddr       ),
+        .regData        ( regData       )
+        `ifdef SM_CONFIG_AHB_GPIO
+        ,
+        .port_gpioIn    ( port_gpioIn   ),
+        .port_gpioOut   ( port_gpioOut  )
+        `endif
     );
 
     defparam sm_top_0.sm_clk_divider.bypass = 1;
@@ -72,6 +84,10 @@ module tb();
     initial
     begin
         $readmemh("../program_file/program.hex", sm_top_0.reset_rom.rom );
+        `ifdef SM_CONFIG_AHB_GPIO
+        port_gpioIn = $urandom_range(0,2**`SM_GPIO_WIDTH-1);
+        $display("Gpio input = 0x%h",port_gpioIn);
+        `endif
         instr_pars_0 = new("../log/log");
         cycle_counter = '0;
         regAddr = '0;

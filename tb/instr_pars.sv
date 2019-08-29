@@ -21,13 +21,13 @@ class instr_pars#(parameter print_info_en = '1, term_print = '1, txt_log_print =
     string              reg_str;
     string              instruction [5];
 
-    int                 txt_p;
+    integer             txt_p;
 
     // for working html file
     logic   [31 : 0]    reg_file_l  [31 : 0];   // local register file
     logic   [1  : 0]    table_c     [31 : 0];   // change table
     string              html_str = "";          // html string
-    int                 html_p;                 // pointer to html log file
+    integer             html_p;                 // pointer to html log file
 
     // register file list names 
     string registers_list [0:31] =  {
@@ -221,7 +221,7 @@ class instr_pars#(parameter print_info_en = '1, term_print = '1, txt_log_print =
     // task for writing register file values in txt file ( table )
     task form_reg_table();
 
-        int reg_addr;
+        integer reg_addr;
         string  reg_value;
         cpu_rf[0] = '0;
         reg_addr = '0;
@@ -259,8 +259,8 @@ class instr_pars#(parameter print_info_en = '1, term_print = '1, txt_log_print =
     // task for formirate register file values in html table
     task form_html_table();
 
-        int tr_i;
-        int td_i;
+        integer tr_i;
+        integer td_i;
         string  reg_value;
         reg_value = "";
         tr_i = 0;
