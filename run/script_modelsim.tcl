@@ -11,7 +11,11 @@ vlog $i0 $i1 $s0 $s1
 vsim -novopt work.tb
 
 add wave -divider  "Instruction strings"
-add wave -position insertpoint sim:/tb/instruction
+add wave -position insertpoint sim:/tb/instruction_F
+add wave -position insertpoint sim:/tb/instruction_D
+add wave -position insertpoint sim:/tb/instruction_E
+add wave -position insertpoint sim:/tb/instruction_M
+add wave -position insertpoint sim:/tb/instruction_W
 add wave -divider  "Testbench signals"
 add wave -position insertpoint sim:/tb/*
 add wave -divider  "schoolMIPS top module signals"

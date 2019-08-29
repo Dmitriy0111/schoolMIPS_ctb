@@ -11,14 +11,15 @@
 
 class instr_pars#(parameter print_info_en = '1, term_print = '1, txt_log_print = '1, html_log_print = '1);
 
-    logic   [31 : 0]    instr;
+    logic   [31 : 0]    instr   [5];
+
     logic   [31 : 0]    pc;
     int                 cycle_counter;
     logic   [31 : 0]    cpu_rf      [31 : 0];
 
     string              log_str;
     string              reg_str;
-    string              instruction;
+    string              instruction [5];
 
     int                 txt_p;
 
@@ -107,56 +108,69 @@ class instr_pars#(parameter print_info_en = '1, term_print = '1, txt_log_print =
     endfunction : new
 
     // function for finding instruction operands
-    function string find_operands(instr_s instr_s_);
+    function string find_operands(instr_s instr_s_, int index);
         string ret_str;
         if( instr_s_.INSTR_TYPE == "I" )
         begin
-            ret_str = { registers_list[instr[20 : 16]] , $psprintf("(0x%h)", instr[20 : 16] ) };
-            ret_str = { ret_str , " " , registers_list[instr[25 : 21]] , $psprintf("(0x%h)", instr[25 : 21] ) };
-            ret_str = { ret_str , " " , $psprintf("0x%h", instr[0 +: 16]) };
+            ret_str = { registers_list[instr[index][20 : 16]] , $psprintf("(0x%h)", instr[index][20 : 16] ) };
+            ret_str = { ret_str , " " , registers_list[instr[index][25 : 21]] , $psprintf("(0x%h)", instr[index][25 : 21] ) };
+            ret_str = { ret_str , " " , $psprintf("0x%h", instr[index][0 +: 16]) };
         end
         if( instr_s_.INSTR_TYPE == "R" )
         begin
-            ret_str = { registers_list[instr[15 : 11]] , $psprintf("(0x%h)", instr[15 : 11] ) };
-            ret_str = { ret_str , " " , registers_list[instr[25 : 21]] , $psprintf("(0x%h)", instr[25 : 21] ) };
-            ret_str = { ret_str , " " , registers_list[instr[20 : 16]] , $psprintf("(0x%h)", instr[20 : 16] ) };
+            ret_str = { registers_list[instr[index][15 : 11]] , $psprintf("(0x%h)", instr[index][15 : 11] ) };
+            ret_str = { ret_str , " " , registers_list[instr[index][25 : 21]] , $psprintf("(0x%h)", instr[index][25 : 21] ) };
+            ret_str = { ret_str , " " , registers_list[instr[index][20 : 16]] , $psprintf("(0x%h)", instr[index][20 : 16] ) };
         end
         if( instr_s_.INSTR_TYPE == "C0" )
         begin
-            ret_str = { registers_list[instr[20 : 16]] , $psprintf("(0x%h)", instr[20 : 16] ) };
-            ret_str = { ret_str , " " , registers_list[instr[15 : 11]] , $psprintf("(0x%h)", instr[15 : 11] ) };
+            ret_str = { registers_list[instr[index][20 : 16]] , $psprintf("(0x%h)", instr[index][20 : 16] ) };
+            ret_str = { ret_str , " " , registers_list[instr[index][15 : 11]] , $psprintf("(0x%h)", instr[index][15 : 11] ) };
         end
         return ret_str;
     endfunction : find_operands
 
     // task for loading values from schoolMIPS in class
-    task load_values(logic [31 : 0] instr_, logic [31 : 0] reg_file[31 : 0], logic [31 : 0] pc, int cycle_counter);
-        this.instr = instr_;
+    task load_values(
+                        logic [31 : 0] instr_F, 
+                        logic [31 : 0] instr_D, 
+                        logic [31 : 0] instr_E, 
+                        logic [31 : 0] instr_M, 
+                        logic [31 : 0] instr_W, 
+                        logic [31 : 0] reg_file[31 : 0], 
+                        logic [31 : 0] pc, 
+                        int cycle_counter
+                    );
+        this.instr[0] = instr_F;
+        this.instr[1] = instr_D;
+        this.instr[2] = instr_E;
+        this.instr[3] = instr_M;
+        this.instr[4] = instr_W;
         this.pc = pc;
         this.cycle_counter = cycle_counter;
         this.cpu_rf = reg_file;
     endtask : load_values
 
     // function for finding instruction fields
-    function string pars_instr();
+    function string pars_instr(int index = 0);
         string ret_str;
         ret_str = "";
-        if( $isunknown(| instr) )
+        if( $isunknown(| instr[index]) )
         begin
-            ret_str =  $psprintf("0x%h : unknown instruction", instr );
+            ret_str =  $psprintf("0x%h : unknown instruction\n", instr[index] );
             return ret_str;
         end
         foreach( instr_list[i] )
         begin 
-            casex( { instr[31-:6] , instr[0+:6] , instr[21 +: 5] } )
+            casex( { instr[index][31-:6] , instr[index][0+:6] , instr[index][21 +: 5] } )
                 { instr_list[i].OPCODE , instr_list[i].INSTR_FUNC , instr_list[i].COP_HF } : 
                     begin
-                        ret_str =  $psprintf("0x%h : %s %s", instr, instr_list[i].I_NAME, find_operands(instr_list[i]) );
+                        ret_str =  $psprintf("0x%h : %s %s\n", instr[index], instr_list[i].I_NAME, find_operands(instr_list[i],index) );
                         return ret_str;
                     end
             endcase
         end
-        ret_str =  $psprintf("0x%h : unknown instruction", instr );
+        ret_str =  $psprintf("0x%h : unknown instruction\n", instr[index] );
         return ret_str;
     endfunction : pars_instr
 
@@ -166,8 +180,21 @@ class instr_pars#(parameter print_info_en = '1, term_print = '1, txt_log_print =
         begin
             log_str = "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n";
             log_str = { log_str, $psprintf("pc = 0x%h, cycle = %0d, time = %0tns \n", pc, cycle_counter, $time) };
-            instruction = pars_instr();
-            log_str = { log_str, instruction };
+            log_str = { log_str, "Fetch stage      : "};
+            instruction[0] = pars_instr(0);
+            log_str = { log_str, instruction[0] };
+            log_str = { log_str, "Decode stage     : "};
+            instruction[1] = pars_instr(1);
+            log_str = { log_str, instruction[1] };
+            log_str = { log_str, "Execute stage    : "};
+            instruction[2] = pars_instr(2);
+            log_str = { log_str, instruction[2] };
+            log_str = { log_str, "Memory stage     : "};
+            instruction[3] = pars_instr(3);
+            log_str = { log_str, instruction[3] };
+            log_str = { log_str, "Write back stage : "};
+            instruction[4] = pars_instr(4);
+            log_str = { log_str, instruction[4] };
             form_reg_table();
             if( html_log_print )
                 form_info_html();

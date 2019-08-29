@@ -27,7 +27,11 @@ module tb();
     
     // help variables
     int                 cycle_counter;      // cycle counter
-    string              instruction;        // instruction string
+    string              instruction_F;      // instruction string
+    string              instruction_D;      // instruction string
+    string              instruction_E;      // instruction string
+    string              instruction_M;      // instruction string
+    string              instruction_W;      // instruction string
 
     instr_pars
     #(
@@ -75,9 +79,22 @@ module tb();
         forever
         begin
             @(posedge cpuClk);
-            instr_pars_0.load_values(sm_top_0.sm_cpu.instr, sm_top_0.sm_cpu.rf.rf, sm_top_0.sm_cpu.pc, cycle_counter);
+            instr_pars_0.load_values(
+                                        sm_top_0.sm_cpu.instr_F,
+                                        sm_top_0.sm_cpu.instr_D,
+                                        sm_top_0.sm_cpu.instr_E, 
+                                        sm_top_0.sm_cpu.instr_M, 
+                                        sm_top_0.sm_cpu.instr_W, 
+                                        sm_top_0.sm_cpu.rf.rf, 
+                                        sm_top_0.sm_cpu.imAddr, 
+                                        cycle_counter
+                                    );
             instr_pars_0.print_info();
-            instruction = instr_pars_0.instruction;
+            instruction_F = instr_pars_0.instruction[0];
+            instruction_D = instr_pars_0.instruction[1];
+            instruction_E = instr_pars_0.instruction[2];
+            instruction_M = instr_pars_0.instruction[3];
+            instruction_W = instr_pars_0.instruction[4];
             cycle_counter++;
             if( cycle_counter == repeat_cycles )
                 $stop;
