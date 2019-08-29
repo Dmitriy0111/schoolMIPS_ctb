@@ -68,7 +68,7 @@ sim_gui: sim_dir
 ########################################################
 # compiling  - program
 
-PROG_LIST ?= 00_counter 01_fibonacci 02_sqrt
+PROG_LIST ?= 00_counter 01_fibonacci 02_sqrt 03_ram 04_gpio 05_pwm 06_als
 
 PROG_NAME ?= 00_counter
 

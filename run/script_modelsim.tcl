@@ -8,6 +8,7 @@ set s0 ../schoolMIPS/src/*.*v
 set s1 ../tb/*.*v
 
 vlog $i0 $i1 $s0 $s1 
+vlog ../schoolMIPS/testbench/sm_als_stub.v
 vsim -novopt work.tb
 
 add wave -divider  "Instruction strings"

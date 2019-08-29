@@ -74,7 +74,9 @@ class instr_pars#(parameter print_info_en = '1, term_print = '1, txt_log_print =
                                 I_ADDIU,
                                 I_BEQ,
                                 I_LUI,
-                                I_BNE
+                                I_BNE,
+                                I_LW,
+                                I_SW
                             };
 
     // class constructor
